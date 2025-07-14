@@ -6,8 +6,12 @@ namespace paymentManager.Data
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        
         {
         }
+
+        public DbSet<Feedback> Feedbacks => Set<Feedback>();
+
 
         // DbSets from the first context
         public DbSet<Supplier> Suppliers { get; set; }
