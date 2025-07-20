@@ -31,16 +31,17 @@ public class HarvestRequestController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, new { id = created.Id });
     }
 
-    [HttpGet("pending")]
-    public async Task<IActionResult> GetPending()
+    [HttpGet("pending/by-collector")]
+    public async Task<IActionResult> GetPendingByCollectorTransport()
     {
-        var result = await _context.HarvestRequests
-            .Where(r => r.Status == "Pending")
+        var results = await _context.HarvestRequests
+            .Where(r => r.Status == "Pending" && r.TransportMethod == "ByCollector")
             .OrderBy(r => r.Date)
             .ToListAsync();
 
-        return Ok(result);
+        return Ok(results);
     }
+
 
     [HttpGet("accepted")]
     public async Task<IActionResult> GetAccepted()

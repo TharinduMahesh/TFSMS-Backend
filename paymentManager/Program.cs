@@ -123,6 +123,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
             errorNumbersToAdd: null)
     ));
 
+builder.Services.AddScoped<FeedbackOperations>();
+
+builder.Services.AddScoped<HarvestRequestService>();
+
+builder.Services.AddScoped<ChatService>();
+
+
 // Register services
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<GreenLeafService>();
@@ -130,6 +137,7 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IAdvanceService, AdvanceService>();
 builder.Services.AddScoped<IDebtService, DebtService>();
 builder.Services.AddScoped<IIncentiveService, IncentiveService>();
+
 
 builder.Services.AddScoped<IDenaturedTeaService, DenaturedTeaService>();
 builder.Services.AddScoped<ITeaReturnService, TeaReturnService>();
@@ -176,7 +184,5 @@ app.UseCors("AllowAngularApp");
 app.UseAuthorization();
 
 app.MapControllers();
-
-
 
 app.Run();

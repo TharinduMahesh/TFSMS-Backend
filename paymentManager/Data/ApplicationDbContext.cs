@@ -12,6 +12,8 @@ namespace paymentManager.Data
 
         public DbSet<Feedback> Feedbacks => Set<Feedback>();
 
+        public DbSet<ChatMessage> ChatMessages { get; set; }
+
         public DbSet<HarvestRequest> HarvestRequests => Set<HarvestRequest>();
 
         // DbSets from the first context
