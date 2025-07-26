@@ -1,6 +1,5 @@
 ﻿// Controllers/GrowerSignUpController.cs
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using test6API.Data;
 using test6API.Models;
 
@@ -30,19 +29,11 @@ namespace test6API.Controllers
             return BadRequest(ModelState);
         }
 
-        // GET by ID
-        [HttpGet("{id}")]
-        public async Task<ActionResult<GrowerCreateAccount>> GetGrowerAccount(int id)
+        [HttpGet]
+        public IActionResult GetAll()
         {
-            var grower = await _context.GrowerCreateAccounts.FindAsync(id);
-
-            if (grower == null)
-            {
-                return NotFound();
-            }
-
-            return grower;
+            var growers = _context.GrowerCreateAccounts.ToList();
+            return Ok(growers);
         }
     }
-
 }

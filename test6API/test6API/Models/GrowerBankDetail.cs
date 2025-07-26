@@ -4,15 +4,27 @@ namespace test6API.Models
 {
     public class GrowerBankDetail
     {
-        [Key]
-        public int BankDetailId { get; set; }
+        [Key] 
+        public int GrowerDetailId { get; set; }
+
         [Required]
-        public string BankName { get; set; }
+        [MaxLength(100)]
+        public string BankName { get; set; } = string.Empty;
+
         [Required]
-        public string BranchName { get; set; }
+        [MaxLength(100)]
+        public string Branch { get; set; } = string.Empty;
+
         [Required]
-        public string AccountHolderName { get; set; }
+        [MaxLength(100)]
+        public string AccountHolderName { get; set; } = string.Empty;
+
         [Required]
-        public string GrowerEmail { get; set; }
+        [MaxLength(100)]
+        public string AccountNumber { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(100)]
+        public string GrowerEmail { get; set; } = string.Empty;
     }
 }

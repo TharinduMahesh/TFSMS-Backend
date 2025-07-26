@@ -8,6 +8,8 @@
         public DateTime PlaceDate { get; set; }
         public string TransportMethod { get; set; } = string.Empty;
         public string PaymentMethod { get; set; } = string.Empty;
-        public string GrowerEmail { get; set; }
+        public string GrowerEmail { get; set; } 
+        public string OrderStatus { get; set; } = string.Empty;
+        public string CollectorEmail { get; set; } = string.Empty;
     }
 }

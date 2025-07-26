@@ -2,7 +2,7 @@
 
 namespace test6API.Models
 {
-    public class CollectorCreateAccount
+    public class CollectorAccount
     {
         [Key]
         public int CollectorAccountId { get; set; }

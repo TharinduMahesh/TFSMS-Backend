@@ -36,7 +36,7 @@ namespace test6API.Models
 
 
 
-        [Required]
+       [Required]
         public string GrowerEmail { get; set; }
 
     }

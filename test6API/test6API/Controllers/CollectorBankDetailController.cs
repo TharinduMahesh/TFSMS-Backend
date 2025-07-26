@@ -16,42 +16,28 @@ namespace test6API.Controllers
             _context = context;
         }
 
-        // GET: api/CollectorBankDetails
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<CollectorBankDetail>>> GetCollectorBankDetails()
-        {
-            return await _context.CollectorBankDetails.ToListAsync();
-        }
-
-        // GET: api/CollectorBankDetails/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CollectorBankDetail>> GetCollectorBankDetail(int id)
-        {
-            var collectorBankDetail = await _context.CollectorBankDetails.FindAsync(id);
-
-            if (collectorBankDetail == null)
-            {
-                return NotFound();
-            }
-
-            return collectorBankDetail;
-        }
-
         // POST: api/CollectorBankDetails
         [HttpPost]
-        public async Task<ActionResult<CollectorBankDetail>> PostCollectorBankDetail(CollectorBankDetail collectorBankDetail)
+        public async Task<IActionResult> PostCollectorBankDetail(CollectorBankDetail detail)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            _context.CollectorBankDetails.Add(collectorBankDetail);
+            _context.CollectorBankDetails.Add(detail);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetCollectorBankDetail),
-                new { id = collectorBankDetail.CollectorDetailId },
-                collectorBankDetail);
+            return CreatedAtAction(nameof(GetCollectorBankDetail), new { email = detail.CollectorEmail }, detail);
+        }
+
+
+        // GET: api/CollectorBankDetails/{email}
+        [HttpGet("{email}")]
+        public async Task<ActionResult<CollectorBankDetail>> GetCollectorBankDetail(string email)
+        {
+            var detail = await _context.CollectorBankDetails
+                .FirstOrDefaultAsync(x => x.CollectorEmail == email);
+
+            if (detail == null)
+                return NotFound();
+
+            return detail;
         }
     }
 }

@@ -6,13 +6,25 @@ namespace test6API.Models
     {
         [Key]
         public int CollectorDetailId { get; set; }
+
         [Required]
-        public string CollectorName { get; set; }
+        [MaxLength(100)]
+        public string BankName { get; set; } = string.Empty;
+
         [Required]
-        public string BranchName { get; set; }
+        [MaxLength(100)]
+        public string Branch { get; set; } = string.Empty;
+
         [Required]
-        public string AccountHolderName { get; set; }
+        [MaxLength(100)]
+        public string AccountHolderName { get; set; } = string.Empty;
+
         [Required]
-        public string CollectorEmail { get; set; }
+        [MaxLength(100)]
+        public string AccountNumber { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(100)]
+        public string CollectorEmail { get; set; } = string.Empty;
     }
 }

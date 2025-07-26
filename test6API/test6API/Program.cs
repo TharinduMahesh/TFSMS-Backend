@@ -1,54 +1,40 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using test6API.Data;
+using test6API.Services; // <-- Make sure this is imported
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// 1. Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// --- ADD THESE LINES FOR EMAIL VERIFICATION ---
+// Binds the "SendGrid" section from appsettings.json to the SendGridSettings class
+builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection("SendGrid"));
+// Registers the SendGridEmailService for dependency injection
+builder.Services.AddScoped<IEmailService, SendGridEmailService>();
+// --- END OF ADDED LINES ---
+
+// Your existing services (if any)
+// builder.Services.AddScoped<ICollectorService, CollectorService>();
+// builder.Services.AddScoped<IOrderService, OrderService>();
+
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// In Startup.cs or Program.cs
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", builder =>
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader());
-});
-
-
-
-// Add Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                builder.Configuration["Jwt:Key"] ?? throw new Exception("JWT Key not found")))
-        };
-    });
-
-// Add Authorization
-builder.Services.AddAuthorization();
-
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -56,14 +42,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-// In the middleware pipeline:
+
 app.UseCors("AllowAll");
-
-app.UseHttpsRedirection();
-
 app.UseAuthorization();
-app.UseAuthentication();
-
 app.MapControllers();
 
 app.Run();
