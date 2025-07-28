@@ -19,6 +19,7 @@ namespace test6API.Data
         public DbSet<CollectorPayment> CollectorPayments { get; set; }
         public DbSet<Conversation> Conversations { get; set; } = null!;
         public DbSet<Message> Messages { get; set; } = null!;
+        public DbSet<GrowerLocation> GrowerLocations { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CollectorPayment>()

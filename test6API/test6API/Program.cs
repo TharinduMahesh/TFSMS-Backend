@@ -20,6 +20,10 @@ builder.Services.AddScoped<IEmailService, SendGridEmailService>();
 // builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ICollectorService, CollectorService>();
+
+
 
 builder.Services.AddCors(options =>
 {
