@@ -37,7 +37,7 @@ public class GrowerOrdersStatusController : ControllerBase
     [HttpGet("details/{id}")]
     public async Task<ActionResult<OrderDetailsDto>> GetOrderDetails(int id)
     {
-        var order = await (from o in _context.GrowerOrders
+        var order = await (from o in _context.GrowerOrders 
                            join g in _context.GrowerCreateAccounts
                            on o.GrowerEmail equals g.GrowerEmail
                            where o.GrowerOrderId == id
@@ -96,5 +96,7 @@ public class GrowerOrdersStatusController : ControllerBase
 
         return Ok(orders);
     }
+
+
 
 }

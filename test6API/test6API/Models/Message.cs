@@ -1,31 +1,33 @@
-﻿// File Path: ./Models/Message.cs
-using System.ComponentModel.DataAnnotations.Schema; // <-- IMPORTANT: Add this using statement
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace test6API.Models
 {
-    // We are explicitly telling EF Core which table this model maps to.
-    [Table("Messages")]
     public class Message
     {
+        [Key]
         public int MessageId { get; set; }
-        public int ConversationId { get; set; }
 
-        // The [Column] attribute maps a C# property to a specific database column name.
-        // If your database column is named "Sender_Type" or something different,
-        // change the name inside the quotes to match it exactly.
-        [Column("SenderType")]
+        // The ID of the user who sent the message.
+        [Required]
+        public int SenderId { get; set; }
+
+        // The ID of the user who received the message.
+        [Required]
+        public int ReceiverId { get; set; }
+
+        // The role of the sender ("Grower" or "Collector")
+        [Required]
         public string SenderType { get; set; }
 
-        [Column("SenderEmail")]
-        public string SenderEmail { get; set; }
+        // The role of the receiver ("Grower" or "Collector")
+        [Required]
+        public string ReceiverType { get; set; }
 
-        [Column("MessageText")]
-        public string MessageText { get; set; }
+        [Required]
+        public string Content { get; set; }
 
-        public DateTime SentAt { get; set; }
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
-        // This tells EF Core how the relationship to the Conversation table works.
-        [ForeignKey("ConversationId")]
-        public Conversation? Conversation { get; set; }
+        public bool IsRead { get; set; } = false;
     }
 }

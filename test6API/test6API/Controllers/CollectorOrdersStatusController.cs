@@ -99,10 +99,28 @@ namespace test6API.Controllers
                                     CollectorCity = collector.CollectorCity,
                                     CollectorPostalCode = collector.CollectorPostalCode,
                                     CollectorVehicleNum = collector.CollectorVehicleNum,
-                                    CollectorPhoneNum= collector.CollectorPhoneNum,
+                                    CollectorPhoneNum = collector.CollectorPhoneNum,
                                 }).ToListAsync();
 
             return Ok(orders);
         }
+        [HttpPut("updateweights/{orderId}")]
+        public async Task<IActionResult> UpdateLeafWeights(int orderId, [FromBody] UpdateWeightsDto dto)
+        {
+            var order = await _context.GrowerOrders.FirstOrDefaultAsync(o => o.GrowerOrderId == orderId);
+            if (order == null)
+            {
+                return NotFound(new { message = $"Order ID {orderId} not found." });
+            }
+
+            order.SuperTeaQuantity = (decimal)dto.SuperLeafWeight;
+            order.GreenTeaQuantity = (decimal)dto.GreenLeafWeight;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Leaf weights updated successfully." });
+        }
+
+
     }
 }

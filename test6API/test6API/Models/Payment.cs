@@ -1,12 +1,33 @@
-﻿namespace test6API.Models
+﻿
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace test6API.Models
 {
     public class Payment
     {
+        [Key]
         public int PaymentId { get; set; }
-        public decimal Amount { get; set; }
-        public string RefNumber { get; set; } = string.Empty;
-        public DateTime PaymentTime { get; set; }
-        public string PaymentMethod { get; set; } = string.Empty;
-        public string GrowerEmail { get; set; } = string.Empty;
+
+        // Foreign key to the GrowerOrder
+        [Required]
+        public int GrowerOrderId { get; set; }
+
+        [ForeignKey("GrowerOrderId")]
+        public virtual GrowerOrder GrowerOrder { get; set; }
+
+        [Required]
+        public string GrowerEmail { get; set; }
+
+        [Required]
+        public string CollectorEmail { get; set; }
+
+        public decimal GrossPayment { get; set; }
+
+        public DateTime PaymentDate { get; set; }
+
+        [StringLength(50)]
+        public string PaymentStatus { get; set; } = "Pending";
     }
 }
+

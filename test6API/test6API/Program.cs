@@ -1,50 +1,70 @@
 using Microsoft.EntityFrameworkCore;
 using test6API.Data;
-using test6API.Services; // <-- Make sure this is imported
+using test6API.Services;
+using test6API.Hubs;
+using System.ComponentModel.DataAnnotations;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Add services to the container.
+// --- Configure Services ---
+
+// 1. Add Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// --- ADD THESE LINES FOR EMAIL VERIFICATION ---
-// Binds the "SendGrid" section from appsettings.json to the SendGridSettings class
+// 2. Add Email Service
 builder.Services.Configure<SendGridSettings>(builder.Configuration.GetSection("SendGrid"));
-// Registers the SendGridEmailService for dependency injection
 builder.Services.AddScoped<IEmailService, SendGridEmailService>();
-// --- END OF ADDED LINES ---
 
-// Your existing services (if any)
-// builder.Services.AddScoped<ICollectorService, CollectorService>();
-// builder.Services.AddScoped<IOrderService, OrderService>();
+// 3. Add SignalR for Chat Functionality
+builder.Services.AddSignalR();
 
+// 4. Add Controllers
 builder.Services.AddControllers();
 
+// 5. Add CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("FlutterAppPolicy", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.SetIsOriginAllowed(origin => true)
+              .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowCredentials();
     });
 });
 
+// 6. Add API Explorer and Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+// --- Build the App ---
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
+// --- Configure the HTTP Request Pipeline ---
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll");
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors("FlutterAppPolicy");
+
 app.UseAuthorization();
+
 app.MapControllers();
 
+// Map the SignalR Hub to the "/chathub" endpoint
+app.MapHub<ChatHub>("/chathub");
+
+
+// --- Run the App ---
 app.Run();

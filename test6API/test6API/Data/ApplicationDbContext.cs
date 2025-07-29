@@ -16,28 +16,8 @@ namespace test6API.Data
         public DbSet<CollectorBankDetail> CollectorBankDetails { get; set; }
         public DbSet<Fertilizer> Fertilizers { get; set; }
 
-        public DbSet<CollectorPayment> CollectorPayments { get; set; }
-        public DbSet<Conversation> Conversations { get; set; } = null!;
         public DbSet<Message> Messages { get; set; } = null!;
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<CollectorPayment>()
-                .HasOne(p => p.Grower)
-                .WithMany()
-                .HasForeignKey(p => p.GrowerNIC)
-                .HasPrincipalKey(g => g.GrowerNIC);
-
-            modelBuilder.Entity<Conversation>()
-                .HasOne(c => c.Grower)
-                .WithMany()
-                .HasForeignKey(c => c.GrowerAccountId);
-
-            modelBuilder.Entity<Conversation>()
-                .HasOne(c => c.Collector)
-                .WithMany()
-                .HasForeignKey(c => c.CollectorAccountId);
-
-        }
+        public DbSet<GrowerLocation> GrowerLocations { get; set; } = null!;
 
     }
 }

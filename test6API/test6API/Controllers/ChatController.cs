@@ -1,10 +1,10 @@
-﻿// File Path: ./Controllers/ChatController.cs
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using test6API.Dtos;
-using test6API.Hubs;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using test6API.Data;
 using test6API.Models;
-using test6API.Services;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace test6API.Controllers
 {
@@ -12,48 +12,25 @@ namespace test6API.Controllers
     [ApiController]
     public class ChatController : ControllerBase
     {
-        private readonly IChatService _chatService;
-        private readonly IHubContext<ChatHub> _hubContext;
+        private readonly ApplicationDbContext _context;
 
-        public ChatController(IChatService chatService, IHubContext<ChatHub> hubContext)
+        public ChatController(ApplicationDbContext context)
         {
-            _chatService = chatService;
-            _hubContext = hubContext;
+            _context = context;
         }
 
-        // GET: api/chat/conversations/grower1@example.com
-        [HttpGet("conversations/{userEmail}")]
-        public async Task<ActionResult<List<Conversation>>> GetConversations(string userEmail)
+        [HttpGet("history/{senderId}/{senderType}/{receiverId}/{receiverType}")]
+        public async Task<ActionResult<IEnumerable<Message>>> GetChatHistory(int senderId, string senderType, int receiverId, string receiverType)
         {
-            var conversations = await _chatService.GetConversationsForUserAsync(userEmail);
-            return Ok(conversations);
-        }
+            var messages = await _context.Messages
+                .Where(m =>
+                    (m.SenderId == senderId && m.SenderType == senderType && m.ReceiverId == receiverId && m.ReceiverType == receiverType) ||
+                    (m.SenderId == receiverId && m.SenderType == receiverType && m.ReceiverId == senderId && m.ReceiverType == senderType)
+                )
+                .OrderBy(m => m.Timestamp)
+                .ToListAsync();
 
-        // GET: api/chat/messages/1
-        [HttpGet("messages/{conversationId}")]
-        public async Task<ActionResult<List<Message>>> GetMessages(int conversationId)
-        {
-            var messages = await _chatService.GetMessagesForConversationAsync(conversationId);
             return Ok(messages);
-        }
-
-        // POST: api/chat/messages
-        [HttpPost("messages")]
-        public async Task<ActionResult<Message>> SendMessage([FromBody] MessageCreateDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            // 1. Save the message to the database
-            var newMessage = await _chatService.SendMessageAsync(dto);
-
-            // 2. Use SignalR to push the new message to all connected clients in real-time
-            // The group name is the conversation ID.
-            // The method name "ReceiveMessage" is what your Flutter client will listen for.
-            await _hubContext.Clients.Group(dto.ConversationId.ToString())
-                             .SendAsync("ReceiveMessage", newMessage);
-
-            return Ok(newMessage);
         }
     }
 }
